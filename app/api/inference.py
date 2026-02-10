@@ -15,10 +15,6 @@ inference_service: InferenceService = None
 
 async def get_inference_service() -> InferenceService:
     """Dependency injection for inference service"""
-    global inference_service
-    if inference_service is None:
-        inference_service = InferenceService()
-        await inference_service.initialize()
     return inference_service
 
 

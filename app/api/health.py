@@ -17,18 +17,17 @@ _start_time = time.time()
 
 async def get_inference_service() -> InferenceService:
     """Dependency injection for inference service"""
-    global inference_service
-    if inference_service is None:
-        inference_service = InferenceService()
-        await inference_service.initialize()
     return inference_service
 
 
 @router.get("/health", response_model=HealthResponse)
-async def health_check(service: InferenceService = Depends(get_inference_service)):
+async def health_check():
     """Health check endpoint"""
     uptime = time.time() - _start_time
-    loaded_models = service.get_loaded_models()
+    loaded_models = []
+    
+    if inference_service:
+        loaded_models = inference_service.get_loaded_models()
     
     return HealthResponse(
         status="healthy",
@@ -46,9 +45,12 @@ async def liveness_probe():
 
 
 @router.get("/health/ready")
-async def readiness_probe(service: InferenceService = Depends(get_inference_service)):
+async def readiness_probe():
     """Kubernetes readiness probe"""
-    loaded_models = service.get_loaded_models()
+    loaded_models = []
+    if inference_service:
+        loaded_models = inference_service.get_loaded_models()
+    
     is_ready = len(loaded_models) > 0
     
     return {

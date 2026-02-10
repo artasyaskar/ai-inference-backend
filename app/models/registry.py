@@ -30,13 +30,13 @@ class ModelRegistry:
     def _register_default_models(self):
         """Register default models available in the system"""
         
-        # Simple summarizer model
+        # Simple summarizer model (using a much smaller model for testing)
         self.register_model(
             name="summarizer",
             version="v1",
             model_type=ModelType.SUMMARIZER,
             description="Lightweight text summarization model",
-            huggingface_model="facebook/bart-large-cnn",
+            huggingface_model="sshleifer/distilbart-cnn-12-6",
             parameters={"max_length": 150, "min_length": 30}
         )
         
@@ -50,13 +50,13 @@ class ModelRegistry:
             parameters={}
         )
         
-        # Text generator
+        # Text generator (using smaller model)
         self.register_model(
             name="generator",
             version="v1",
             model_type=ModelType.GENERATOR,
             description="Lightweight text generation model",
-            huggingface_model="gpt2",
+            huggingface_model="distilgpt2",
             parameters={"max_length": 100, "num_return_sequences": 1}
         )
     

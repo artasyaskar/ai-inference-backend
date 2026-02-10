@@ -4,6 +4,8 @@ from datetime import datetime
 
 
 class InferenceResponse(BaseModel):
+    model_config = {"protected_namespaces": ()}
+    
     success: bool = Field(..., description="Whether the inference was successful")
     result: Optional[str] = Field(None, description="Inference result")
     model_used: str = Field(..., description="Model name and version used")
