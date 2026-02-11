@@ -135,20 +135,19 @@ class InferenceService:
             return "Classification failed"
         
         elif model_type == ModelType.GENERATOR:
-            # Text generation - automatically create detailed content
+            # Text generation - create professional content
             try:
-                # Create a better prompt for content generation
-                if len(text.strip()) < 3:
-                    prompt = f"Write a comprehensive, detailed, and extensive article about the topic: {text}. Include multiple aspects, examples, and thorough explanations. Make it very informative and lengthy."
-                else:
-                    prompt = f"Write a comprehensive, detailed, and extensive article about: {text}. Include multiple aspects, examples, and thorough explanations. Make it very informative and lengthy."
+                # Create a professional prompt for high-quality content
+                prompt = f"Write a professional, well-structured, and informative article about {text}. The article should be comprehensive, engaging, and written in a clear, professional style. Include relevant details, examples, and insights. Make it approximately 300-400 words."
                 
                 result = model_pipeline(
                     prompt,
-                    max_length=400,
-                    temperature=0.8,
+                    max_length=500,
+                    temperature=0.7,
                     do_sample=True,
-                    min_length=150,
+                    min_length=200,
+                    num_beams=3,
+                    early_stopping=True,
                     pad_token_id=model_pipeline.tokenizer.eos_token_id
                 )
                 
@@ -160,11 +159,18 @@ class InferenceService:
                     # Clean up the generated text
                     generated_text = generated_text.strip()
                     
-                    # Ensure we're not just echoing input
-                    if len(generated_text) > len(text) * 2:  # Ensure it's substantially longer than input
+                    # Remove any remaining prompt artifacts
+                    if text.lower() in generated_text.lower():
+                        # Find where the actual content starts
+                        content_start = generated_text.lower().find(text.lower()) + len(text)
+                        if content_start < len(generated_text):
+                            generated_text = generated_text[content_start:].strip()
+                    
+                    # Ensure we have substantial content
+                    if len(generated_text) > 100:
                         return generated_text
                     else:
-                        return "Generation failed - please try a different topic"
+                        return "Content generation incomplete. Please try again."
                 else:
                     self.logger.error("Empty generation result", result=result)
                     return "Generation failed - no result returned"
