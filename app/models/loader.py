@@ -87,9 +87,13 @@ class ModelLoader:
     
     async def _load_generator(self, model_info: ModelInfo):
         """Load a text generation model"""
+        tokenizer = AutoTokenizer.from_pretrained(model_info.huggingface_model)
+        model = AutoModelForCausalLM.from_pretrained(model_info.huggingface_model)
+        
         return pipeline(
             "text-generation",
-            model=model_info.huggingface_model,
+            model=model,
+            tokenizer=tokenizer,
             device=0 if torch.cuda.is_available() else -1
         )
     

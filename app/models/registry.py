@@ -57,7 +57,7 @@ class ModelRegistry:
             model_type=ModelType.GENERATOR,
             description="Lightweight text generation model",
             huggingface_model="distilgpt2",
-            parameters={"max_length": 100, "num_return_sequences": 1}
+            parameters={"max_length": 100, "num_return_sequences": 1, "temperature": 0.7, "do_sample": True}
         )
     
     def register_model(self, name: str, version: str, model_type: ModelType, 

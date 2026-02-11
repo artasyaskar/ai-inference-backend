@@ -64,7 +64,7 @@ const ModelSelector = ({
   };
 
   return (
-    <div className="glass-dark rounded-xl p-6">
+    <div className="glass-dark rounded-xl p-6 relative z-40">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold flex items-center gap-2">
           <CpuChipIcon className="w-5 h-5 text-primary-400" />
@@ -118,7 +118,7 @@ const ModelSelector = ({
               initial="hidden"
               animate="visible"
               exit="hidden"
-              className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-lg border border-white/20 z-50 max-h-96 overflow-y-auto custom-scrollbar"
+              className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-lg border border-white/20 z-50 max-h-96 overflow-y-auto custom-scrollbar min-w-full"
             >
               {models.map((model) => (
                 <motion.button
