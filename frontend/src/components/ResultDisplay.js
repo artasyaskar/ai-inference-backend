@@ -12,18 +12,22 @@ const ResultDisplay = ({ result, error, loading, onRetry, onStop }) => {
   const [showFullResult, setShowFullResult] = useState(false);
 
   const copyResult = () => {
-    navigator.clipboard.writeText(result?.result || '');
-    // Could add toast notification here
+    if (result?.result) {
+      navigator.clipboard.writeText(result.result);
+      // Could add toast notification here
+    }
   };
 
   const downloadResult = () => {
-    const element = document.createElement('a');
-    const file = new Blob([result?.result || ''], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = `inference-result-${Date.now()}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    if (result?.result) {
+      const element = document.createElement('a');
+      const file = new Blob([result.result], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `inference-result-${Date.now()}.txt`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
   };
 
   const containerVariants = {
@@ -219,21 +223,21 @@ const ResultDisplay = ({ result, error, loading, onRetry, onStop }) => {
               <div className="bg-dark-700/30 rounded-lg p-4 border border-dark-600/50">
                 <pre className="whitespace-pre-wrap text-sm text-gray-200 font-mono leading-relaxed">
                   {showFullResult 
-                    ? result.result 
-                    : result.result.slice(0, 500) + (result.result.length > 500 ? '...' : '')
+                    ? result?.result 
+                    : result?.result?.slice(0, 500) + (result?.result?.length > 500 ? '...' : '')
                   }
                 </pre>
               </div>
 
               {/* Show More/Less Button */}
-              {result.result.length > 500 && (
+              {result?.result?.length > 500 && (
                 <motion.button
                   onClick={() => setShowFullResult(!showFullResult)}
                   className="text-primary-400 hover:text-primary-300 text-sm transition-colors duration-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {showFullResult ? 'Show Less' : `Show ${result.result.length - 500} More Characters`}
+                  {showFullResult ? 'Show Less' : `Show ${result?.result?.length - 500} More Characters`}
                 </motion.button>
               )}
 
