@@ -137,11 +137,14 @@ class InferenceService:
         elif model_type == ModelType.GENERATOR:
             # Text generation - automatically create detailed content
             try:
-                # Create a detailed prompt for extensive content generation
-                detailed_prompt = f"Write a comprehensive, detailed, and extensive article about {text}. Include multiple aspects, examples, and thorough explanations. Make it very informative and lengthy."
+                # Create a better prompt for content generation
+                if len(text.strip()) < 3:
+                    prompt = f"Write a comprehensive, detailed, and extensive article about the topic: {text}. Include multiple aspects, examples, and thorough explanations. Make it very informative and lengthy."
+                else:
+                    prompt = f"Write a comprehensive, detailed, and extensive article about: {text}. Include multiple aspects, examples, and thorough explanations. Make it very informative and lengthy."
                 
                 result = model_pipeline(
-                    detailed_prompt,
+                    prompt,
                     max_length=400,
                     temperature=0.8,
                     do_sample=True,
@@ -153,12 +156,12 @@ class InferenceService:
                 
                 if result and len(result) > 0:
                     generated_text = result[0]['generated_text']
-                    # Remove the prompt from the generated text
-                    if generated_text.startswith(detailed_prompt):
-                        generated_text = generated_text[len(detailed_prompt):].strip()
                     
-                    # Ensure we're not just echoing the input
-                    if generated_text.strip().lower() != text.strip().lower():
+                    # Clean up the generated text
+                    generated_text = generated_text.strip()
+                    
+                    # Ensure we're not just echoing input
+                    if len(generated_text) > len(text) * 2:  # Ensure it's substantially longer than input
                         return generated_text
                     else:
                         return "Generation failed - please try a different topic"
