@@ -46,8 +46,13 @@ class InferenceService:
         
         try:
             # Ensure model is loaded
+            self.logger.info("Checking if model is loaded", model=model_name, version=version)
             if not self.model_loader.is_model_loaded(model_name, version):
-                await self.model_loader.load_model(model_name, version)
+                self.logger.info("Model not loaded, loading now", model=model_name, version=version)
+                success = await self.model_loader.load_model(model_name, version)
+                self.logger.info("Model loading result", model=model_name, version=version, success=success)
+                if not success:
+                    raise ValueError(f"Failed to load model {model_name}:{version}")
             
             # Get the model pipeline
             model_pipeline = self.model_loader.get_model(model_name, version)
@@ -58,6 +63,8 @@ class InferenceService:
             model_info = model_registry.get_model(model_name, version)
             model_params = model_info.parameters.copy()
             model_params.update(request.parameters or {})
+            
+            self.logger.info("Running inference", model=model_name, text_length=len(request.text), params=model_params)
             
             # Process based on model type
             result = await self._run_inference(model_pipeline, request.text, model_info.model_type, model_params)

@@ -87,15 +87,27 @@ class ModelLoader:
     
     async def _load_generator(self, model_info: ModelInfo):
         """Load a text generation model"""
-        tokenizer = AutoTokenizer.from_pretrained(model_info.huggingface_model)
-        model = AutoModelForCausalLM.from_pretrained(model_info.huggingface_model)
-        
-        return pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            device=0 if torch.cuda.is_available() else -1
-        )
+        try:
+            self.logger.info("Loading generator model", model=model_info.huggingface_model)
+            tokenizer = AutoTokenizer.from_pretrained(model_info.huggingface_model)
+            model = AutoModelForCausalLM.from_pretrained(model_info.huggingface_model)
+            
+            # Add pad token if it doesn't exist
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
+            
+            pipeline_obj = pipeline(
+                "text-generation",
+                model=model,
+                tokenizer=tokenizer,
+                device=0 if torch.cuda.is_available() else -1
+            )
+            
+            self.logger.info("Generator model loaded successfully", model=model_info.huggingface_model)
+            return pipeline_obj
+        except Exception as e:
+            self.logger.error("Failed to load generator model", model=model_info.huggingface_model, error=str(e))
+            raise
     
     def get_model(self, name: str, version: str = "v1"):
         """Get a loaded model pipeline"""
