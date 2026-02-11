@@ -80,87 +80,81 @@ function App() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content Area */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Model Selector */}
-              <motion.div variants={itemVariants}>
-                <ModelSelector
-                  models={models}
-                  selectedModel={selectedModel}
-                  onModelChange={setSelectedModel}
-                  loading={modelsLoading}
-                  parameters={parameters}
-                  onParametersChange={setParameters}
-                />
-              </motion.div>
-
-              {/* Text Input */}
-              <motion.div variants={itemVariants}>
-                <TextInput
-                  text={text}
-                  onTextChange={setText}
-                  onSubmit={() => processInference(selectedModel, parameters)}
-                  loading={loading}
-                  disabled={!text.trim()}
-                />
-              </motion.div>
-
-              {/* Result Display */}
-              <AnimatePresence mode="wait">
-                {(result || error || loading) && (
-                  <motion.div
-                    variants={itemVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                  >
-                    <ResultDisplay
-                      result={result}
-                      error={error}
-                      loading={loading}
-                      onRetry={() => processInference(selectedModel, parameters)}
-                      onStop={stopInference}
+              {activeSection === 'features' && (
+                <>
+                  <motion.div variants={itemVariants}>
+                    <ModelSelector 
+                      models={models} 
+                      selectedModel={selectedModel}
+                      onModelChange={setSelectedModel}
+                      loading={modelsLoading}
+                      parameters={parameters}
+                      onParametersChange={setParameters}
                     />
                   </motion.div>
-                )}
-              </AnimatePresence>
 
-              {/* History */}
-              {inferenceHistory.length > 0 && (
-                <motion.div variants={itemVariants} className="glass-dark rounded-xl p-6">
-                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                    <SparklesIcon className="w-5 h-5" />
-                    Recent Inferences
-                  </h3>
-                  <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
-                    {inferenceHistory.slice(-5).reverse().map((item, index) => (
-                      <motion.div
-                        key={item.requestId}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="glass rounded-lg p-3"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <p className="text-sm text-gray-300 truncate">
-                              {item.text.substring(0, 100)}...
-                            </p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {item.model} • {item.latencyMs}ms
-                            </p>
-                          </div>
-                          <div className="ml-2">
-                            {item.success ? (
-                              <CheckCircleIcon className="w-4 h-4 text-green-400" />
-                            ) : (
-                              <ExclamationCircleIcon className="w-4 h-4 text-red-400" />
-                            )}
-                          </div>
-                        </div>
+                  <motion.div variants={itemVariants}>
+                    <TextInput 
+                      text={text}
+                      onTextChange={setText}
+                      onSubmit={() => processInference(selectedModel, parameters)}
+                      loading={loading}
+                      disabled={!selectedModel || loading}
+                    />
+                  </motion.div>
+
+                  <AnimatePresence>
+                    {(result || error || loading) && (
+                      <motion.div variants={itemVariants}>
+                        <ResultDisplay 
+                          result={result}
+                          error={error}
+                          loading={loading}
+                          onRetry={() => processInference(selectedModel, parameters)}
+                          onStop={stopInference}
+                        />
                       </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* History */}
+                  {inferenceHistory.length > 0 && (
+                    <motion.div variants={itemVariants} className="glass-dark rounded-xl p-6">
+                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                        <SparklesIcon className="w-5 h-5" />
+                        Recent Inferences
+                      </h3>
+                      <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
+                        {inferenceHistory.slice(-5).reverse().map((item, index) => (
+                          <motion.div
+                            key={item.requestId}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="glass rounded-lg p-3"
+                          >
+                            <div className="flex justify-between items-start gap-3">
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-300 truncate">
+                                  {item.text.substring(0, 50)}...
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {item.model} • {item.latencyMs}ms
+                                </p>
+                              </div>
+                              <div className={`w-2 h-2 rounded-full ${
+                                item.success ? 'bg-green-400' : 'bg-red-400'
+                              }`} />
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </>
               )}
+              
+              <NavigationContent activeSection={activeSection} />
             </div>
 
             {/* Sidebar */}
