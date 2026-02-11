@@ -165,7 +165,7 @@ function App() {
             <div className="space-y-6">
               {/* Quick Stats */}
               <motion.div variants={itemVariants}>
-                <SystemStatus models={models} loading={modelsLoading} inferenceHistory={inferenceHistory} />
+                <SystemStatus models={models} loading={modelsLoading} inferenceHistory={inferenceHistory} selectedModel={selectedModel} />
               </motion.div>
 
               {/* Metrics Toggle */}
