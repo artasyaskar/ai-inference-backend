@@ -6,32 +6,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+        primary: {
+          50: '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#06b6d4',
+          600: '#0891b2',
+          700: '#0e7490',
+          800: '#155e75',
+          900: '#164e63',
+          950: '#082f49',
         },
-        'dark': {
-          50: '#18181b',
-          100: '#27272a',
-          200: '#3f3f46',
-          300: '#52525b',
-          400: '#71717a',
-          500: '#a1a1aa',
-          600: '#d4d4d8',
-          700: '#e4e4e7',
-          800: '#f4f4f5',
-          900: '#fafafa',
+        dark: {
+          50: '#020617',
+          100: '#020617',
+          200: '#0b1120',
+          300: '#020617',
+          400: '#1e293b',
+          500: '#334155',
+          600: '#64748b',
+          700: '#cbd5f5',
+          800: '#e2e8f0',
+          900: '#f8fafc',
         },
-        'accent': {
+        accent: {
           50: '#fdf4ff',
           100: '#fae8ff',
           200: '#f5d0fe',
@@ -45,8 +45,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
-        'mono': ['JetBrains Mono', 'monospace'],
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       animation: {
         'gradient': 'gradient 8s linear infinite',

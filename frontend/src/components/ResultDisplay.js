@@ -4,8 +4,7 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   DocumentDuplicateIcon,
-  ArrowDownTrayIcon,
-  XMarkIcon
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 import { PlayIcon, StopIcon } from '@heroicons/react/24/solid';
 

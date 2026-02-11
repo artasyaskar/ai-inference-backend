@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  PaperAirplaneIcon, 
   MicrophoneIcon,
   DocumentDuplicateIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { PlayIcon, StopIcon } from '@heroicons/react/24/solid';
+import { PlayIcon } from '@heroicons/react/24/solid';
 
 const TextInput = ({ text, onTextChange, onSubmit, loading, disabled }) => {
   const [isRecording, setIsRecording] = useState(false);

@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   SparklesIcon, 
-  DocumentTextIcon,
-  ChatBubbleLeftRightIcon,
-  ArrowPathIcon,
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import { 
-  PlayIcon, 
-  StopIcon,
   Cog6ToothIcon,
   ChartBarIcon
 } from '@heroicons/react/24/solid';
@@ -20,6 +15,8 @@ import ModelSelector from './components/ModelSelector';
 import TextInput from './components/TextInput';
 import ResultDisplay from './components/ResultDisplay';
 import MetricsPanel from './components/MetricsPanel';
+import CursorSparkles from './components/CursorSparkles';
+import SystemStatus from './components/SystemStatus';
 import { useInference } from './hooks/useInference';
 import { useModels } from './hooks/useModels';
 
@@ -65,30 +62,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-bg text-white overflow-hidden">
-      {/* Animated background particles */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-primary-400/30 rounded-full"
-            animate={{
-              x: [0, Math.random() * 100 - 50],
-              y: [0, Math.random() * 100 - 50],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 10 + Math.random() * 20,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Cursor Sparkles */}
+      <CursorSparkles />
 
+      {/* Main Content */}
       <div className="relative z-10">
         <Header />
         
@@ -187,32 +164,8 @@ function App() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Quick Stats */}
-              <motion.div variants={itemVariants} className="glass-dark rounded-xl p-6">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <SparklesIcon className="w-5 h-5" />
-                  System Status
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Models Loaded</span>
-                    <span className="text-primary-400 font-mono">
-                      {models.filter(m => m.is_loaded).length}/{models.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">API Status</span>
-                    <span className="text-green-400 flex items-center gap-1">
-                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                      Online
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Total Requests</span>
-                    <span className="text-primary-400 font-mono">
-                      {inferenceHistory.length}
-                    </span>
-                  </div>
-                </div>
+              <motion.div variants={itemVariants}>
+                <SystemStatus models={models} loading={modelsLoading} inferenceHistory={inferenceHistory} />
               </motion.div>
 
               {/* Metrics Toggle */}
@@ -223,6 +176,9 @@ function App() {
                 >
                   <span className="flex items-center gap-2">
                     <ChartBarIcon className="w-5 h-5" />
+                    <span className="text-primary-400 font-mono">
+                      {inferenceHistory.length}
+                    </span>
                     Performance Metrics
                   </span>
                   <motion.div

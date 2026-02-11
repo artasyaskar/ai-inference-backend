@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SparklesIcon, CpuChipIcon } from '@heroicons/react/24/outline';
+import { CpuChipIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
   const headerVariants = {
@@ -38,25 +38,26 @@ const Header = () => {
           <motion.div
             variants={logoVariants}
             whileHover="hover"
-            className="flex items-center gap-3 cursor-pointer"
           >
-            <div className="relative">
-              <CpuChipIcon className="w-8 h-8 text-primary-400" />
-              <motion.div
-                className="absolute -top-1 -right-1 w-3 h-3 bg-accent-500 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [1, 0.5, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-              />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold gradient-text">AI Inference</h1>
-              <p className="text-xs text-gray-400">Production AI Platform</p>
+            <div className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <CpuChipIcon className="w-8 h-8 text-primary-400" />
+                <motion.div
+                  className="absolute -top-1 -right-1 w-3 h-3 bg-accent-500 rounded-full"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [1, 0.5, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold gradient-text">AI Inference</h1>
+                <p className="text-xs text-gray-400">Production AI Platform</p>
+              </div>
             </div>
           </motion.div>
 
