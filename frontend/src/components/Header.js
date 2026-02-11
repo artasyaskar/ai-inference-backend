@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CpuChipIcon } from '@heroicons/react/24/outline';
 
-const Header = () => {
+const Header = ({ activeSection, onSectionChange }) => {
   const headerVariants = {
     hidden: { y: -50, opacity: 0 },
     visible: {
@@ -63,21 +63,25 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            {['Features', 'Models', 'Docs', 'API'].map((item, index) => (
-              <motion.a
+            {['features', 'models', 'docs', 'api'].map((item) => (
+              <motion.button
                 key={item}
-                href="#"
-                className="text-gray-300 hover:text-white transition-colors duration-200 relative group"
+                onClick={() => onSectionChange(item)}
+                className={`text-gray-300 hover:text-white transition-colors duration-200 relative group capitalize ${
+                  activeSection === item ? 'text-primary-400' : ''
+                }`}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {item}
                 <motion.div
-                  className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400"
+                  className={`absolute bottom-0 left-0 h-0.5 ${
+                    activeSection === item ? 'bg-primary-400 w-full' : 'bg-primary-400'
+                  }`}
                   whileHover={{ width: "100%" }}
                   transition={{ duration: 0.3 }}
                 />
-              </motion.a>
+              </motion.button>
             ))}
           </nav>
 

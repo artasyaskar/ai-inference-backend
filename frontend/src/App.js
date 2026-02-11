@@ -17,6 +17,7 @@ import ResultDisplay from './components/ResultDisplay';
 import MetricsPanel from './components/MetricsPanel';
 import CursorSparkles from './components/CursorSparkles';
 import SystemStatus from './components/SystemStatus';
+import NavigationContent from './components/NavigationContent';
 import { useInference } from './hooks/useInference';
 import { useModels } from './hooks/useModels';
 
