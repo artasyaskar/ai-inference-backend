@@ -30,6 +30,11 @@ const ResultDisplay = ({ result, error, loading, onRetry, onStop }) => {
     }
   };
 
+  // Debug logging
+  console.log('ResultDisplay - result:', result);
+  console.log('ResultDisplay - error:', error);
+  console.log('ResultDisplay - loading:', loading);
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {

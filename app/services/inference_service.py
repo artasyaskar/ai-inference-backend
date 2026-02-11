@@ -129,21 +129,32 @@ class InferenceService:
         
         elif model_type == ModelType.GENERATOR:
             # Text generation
-            result = model_pipeline(text, **params)
-            if result and len(result) > 0:
-                generated_text = result[0]['generated_text']
-                # Ensure we're not just echoing the input
-                if generated_text.strip().lower() != text.strip().lower():
-                    return generated_text
+            try:
+                result = model_pipeline(text, **params)
+                self.logger.info("Generation result received", result=result)
+                
+                if result and len(result) > 0:
+                    generated_text = result[0]['generated_text']
+                    # Ensure we're not just echoing the input
+                    if generated_text.strip().lower() != text.strip().lower():
+                        return generated_text
+                    else:
+                        # If we got the same text, try again with different parameters
+                        params_with_variation = params.copy()
+                        params_with_variation['temperature'] = params.get('temperature', 0.7) + 0.2
+                        params_with_variation['do_sample'] = True
+                        result2 = model_pipeline(text, **params_with_variation)
+                        self.logger.info("Second generation attempt", result=result2)
+                        if result2 and len(result2) > 0:
+                            return result2[0]['generated_text']
+                        else:
+                            return "Generation failed - model may not be loaded correctly"
                 else:
-                    # If we got the same text, try again with different parameters
-                    params_with_variation = params.copy()
-                    params_with_variation['temperature'] = params.get('temperature', 0.7) + 0.2
-                    params_with_variation['do_sample'] = True
-                    result2 = model_pipeline(text, **params_with_variation)
-                    if result2 and len(result2) > 0:
-                        return result2[0]['generated_text']
-            return "Generation failed - please try different input"
+                    self.logger.error("Empty generation result", result=result)
+                    return "Generation failed - no result returned"
+            except Exception as e:
+                self.logger.error("Generation pipeline error", error=str(e))
+                return f"Generation failed: {str(e)}"
         
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
