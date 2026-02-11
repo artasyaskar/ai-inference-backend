@@ -69,7 +69,7 @@ function App() {
 
       {/* Main Content */}
       <div className="relative z-10">
-        <Header />
+        <Header activeSection={activeSection} onSectionChange={setActiveSection} />
         
         <motion.div
           className="container mx-auto px-4 py-8"
