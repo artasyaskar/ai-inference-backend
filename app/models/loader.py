@@ -1,7 +1,14 @@
 import time
 import asyncio
 from typing import Optional, Dict, Any
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForSeq2SeqLM, pipeline
+from transformers import (
+    AutoTokenizer, 
+    AutoModel, 
+    AutoModelForSequenceClassification, 
+    AutoModelForSeq2SeqLM,
+    AutoModelForCausalLM,
+    pipeline
+)
 import torch
 
 from .registry import ModelRegistry, ModelInfo, ModelType
