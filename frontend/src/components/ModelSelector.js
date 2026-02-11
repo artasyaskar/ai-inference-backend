@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ChevronDownIcon,
+  CpuChipIcon,
   DocumentTextIcon,
-  ChatBubbleLeftRightIcon,
-  SparklesIcon,
-  Cog6ToothIcon,
-  CpuChipIcon
+  FaceSmileIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
+import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 
 const ModelSelector = ({ 
   models, 
@@ -56,6 +55,25 @@ const ModelSelector = ({
     visible: {
       opacity: 1,
       scale: 1,
+      transition: {
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      y: 10,
+      transition: {
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
       transition: {
         duration: 0.2,
         ease: "easeOut"
@@ -167,8 +185,8 @@ const ModelSelector = ({
         )}
       </AnimatePresence>
 
-      {/* Model Parameters */}
-      {selectedModelData && Object.keys(selectedModelData.parameters || {}).length > 0 && (
+      {/* Model Parameters - Hide for Generator */}
+      {selectedModelData && selectedModelData.type !== 'generator' && Object.keys(selectedModelData.parameters || {}).length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -197,6 +215,27 @@ const ModelSelector = ({
               />
             </div>
           ))}
+        </motion.div>
+      )}
+      
+      {/* Generator Model Special Message */}
+      {selectedModelData && selectedModelData.type === 'generator' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-4"
+        >
+          <div className="bg-gradient-to-r from-primary-500/20 to-accent-500/20 rounded-lg p-4 border border-primary-500/30">
+            <h4 className="text-sm font-medium text-primary-300 flex items-center gap-2 mb-2">
+              <SparklesIcon className="w-4 h-4" />
+              Automatic Content Generation
+            </h4>
+            <p className="text-xs text-primary-200 leading-relaxed">
+              Just enter any topic and the AI will automatically generate comprehensive, detailed content about it! 
+              No parameters needed - the model handles everything for you.
+            </p>
+          </div>
         </motion.div>
       )}
     </div>
