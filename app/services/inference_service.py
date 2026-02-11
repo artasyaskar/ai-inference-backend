@@ -135,52 +135,74 @@ class InferenceService:
             return "Classification failed"
         
         elif model_type == ModelType.GENERATOR:
-            # Text generation - direct content creation
+            # Advanced text generation - ChatGPT-like experience
             try:
-                # Clean and prepare the input topic
-                topic = text.strip()
-                if not topic:
-                    return "Please provide a topic to generate content about."
+                # Clean and prepare the input
+                user_input = text.strip()
+                if not user_input:
+                    return "Please provide a topic or question to generate content about."
                 
-                # Simple, direct prompt - no complex instructions
-                simple_prompt = f"{topic}: "
+                # Create conversational prompts based on input type
+                if user_input.lower().startswith(("write", "tell", "create", "generate")):
+                    # User wants content creation
+                    prompt = f"You are a helpful AI assistant. {user_input} Write in a detailed, engaging, and informative style."
+                elif user_input.endswith("?"):
+                    # User is asking a question
+                    prompt = f"Question: {user_input}\n\nAnswer: I'd be happy to help you with that. "
+                else:
+                    # User wants information about a topic
+                    prompt = f"Tell me about {user_input}. Provide comprehensive information in an engaging way."
                 
-                # Generate content with basic parameters
+                # Generate with advanced parameters
                 result = model_pipeline(
-                    simple_prompt,
-                    max_length=400,
+                    prompt,
+                    max_new_tokens=300,
                     temperature=0.8,
                     do_sample=True,
-                    top_p=0.95,
-                    pad_token_id=model_pipeline.tokenizer.eos_token_id
+                    top_p=0.9,
+                    top_k=50,
+                    no_repeat_ngram_size=2,
+                    pad_token_id=model_pipeline.tokenizer.pad_token_id,
+                    eos_token_id=model_pipeline.tokenizer.eos_token_id
                 )
                 
-                self.logger.info("Generation result received", result=result)
+                self.logger.info("Advanced generation result received", result=result)
                 
                 if result and len(result) > 0:
                     generated_text = result[0]['generated_text']
                     
-                    # Remove the prompt prefix
-                    if generated_text.startswith(simple_prompt):
-                        generated_text = generated_text[len(simple_prompt):].strip()
-                    
-                    # Clean up the text
+                    # Clean up the generated text
                     generated_text = generated_text.strip()
                     
-                    # Remove excessive newlines
-                    generated_text = ' '.join(generated_text.split())
+                    # Remove any remaining prompt artifacts
+                    if prompt in generated_text:
+                        generated_text = generated_text.replace(prompt, "").strip()
+                    
+                    # Clean up common artifacts
+                    artifacts_to_remove = [
+                        "I'd be happy to help you with that.",
+                        "Here's some information about",
+                        "You are a helpful AI assistant.",
+                        "Question:",
+                        "Answer:"
+                    ]
+                    
+                    for artifact in artifacts_to_remove:
+                        if artifact in generated_text:
+                            generated_text = generated_text.replace(artifact, "").strip()
                     
                     # Ensure we have meaningful content
-                    if len(generated_text) > 50 and generated_text != topic:
+                    if len(generated_text) > 30:
                         return generated_text
                     else:
-                        return f"Here's some information about {topic}. This is a professional content generation system that creates informative articles on various topics. The system is designed to provide comprehensive and engaging content about any subject you're interested in."
+                        # Fallback response
+                        return f"I understand you're interested in {user_input}. This is an advanced AI system designed to provide comprehensive and engaging content on various topics. For more specific information, you might want to ask about particular aspects of {user_input} that interest you most."
                 else:
                     self.logger.error("Empty generation result", result=result)
-                    return "Generation failed - no result returned"
+                    return "I apologize, but I couldn't generate content at the moment. Please try again with a different topic or question."
             except Exception as e:
-                self.logger.error("Generation pipeline error", error=str(e))
-                return f"Generation failed: {str(e)}"
+                self.logger.error("Advanced generation pipeline error", error=str(e))
+                return f"I encountered an error while generating content: {str(e)}. Please try again."
         
         else:
             raise ValueError(f"Unsupported model type: {model_type}")

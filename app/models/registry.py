@@ -50,14 +50,14 @@ class ModelRegistry:
             parameters={}
         )
         
-        # Text generator (using better model)
+        # Text generator (using powerful model)
         self.register_model(
             name="generator",
             version="v1",
             model_type=ModelType.GENERATOR,
-            description="Professional text generation model",
-            huggingface_model="gpt2",
-            parameters={"max_length": 400, "temperature": 0.7, "do_sample": True, "min_length": 150}
+            description="Advanced conversational AI model",
+            huggingface_model="microsoft/DialoGPT-medium",
+            parameters={"max_length": 500, "temperature": 0.8, "do_sample": True, "top_p": 0.9, "top_k": 50}
         )
     
     def register_model(self, name: str, version: str, model_type: ModelType, 

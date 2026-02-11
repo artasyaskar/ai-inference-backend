@@ -116,6 +116,91 @@ class ModelLoader:
             self.logger.error("Failed to load generator model", model=model_info.huggingface_model, error=str(e))
             raise
     
+    async def load_generator_model(self, model_name: str, version: str) -> Any:
+        """Load text generation model with tokenizer"""
+        try:
+            from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+            import torch
+            
+            model_info = self.registry.get_model(model_name, version)
+            model_path = model_info.huggingface_model
+            
+            self.logger.info(f"Loading advanced generator model", model=model_path)
+            
+            # Load tokenizer and model
+            tokenizer = AutoTokenizer.from_pretrained(model_path)
+            
+            # Set pad token if not present
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
+            
+            model = AutoModelForCausalLM.from_pretrained(
+                model_path,
+                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                device_map="auto" if torch.cuda.is_available() else None
+            )
+            
+            # Create generation config for better output
+            generation_config = GenerationConfig(
+                max_new_tokens=400,
+                temperature=0.8,
+                do_sample=True,
+                top_p=0.9,
+                top_k=50,
+                no_repeat_ngram_size=2,
+                pad_token_id=tokenizer.pad_token_id,
+                eos_token_id=tokenizer.eos_token_id,
+                early_stopping=True
+            )
+            
+            # Create a simple pipeline wrapper
+            class AdvancedGenerator:
+                def __init__(self, model, tokenizer, generation_config):
+                    self.model = model
+                    self.tokenizer = tokenizer
+                    self.generation_config = generation_config
+                
+                def __call__(self, prompt, **kwargs):
+                    # Merge with generation config
+                    config = self.generation_config
+                    for key, value in kwargs.items():
+                        setattr(config, key, value)
+                    
+                    # Tokenize input
+                    inputs = self.tokenizer.encode(prompt, return_tensors="pt")
+                    if self.model.device.type != 'cpu':
+                        inputs = inputs.to(self.model.device)
+                    
+                    # Generate
+                    with torch.no_grad():
+                        outputs = self.model.generate(
+                            inputs,
+                            generation_config=config,
+                            return_dict_in_generate=True,
+                            output_scores=True
+                        )
+                    
+                    # Decode
+                    generated_text = self.tokenizer.decode(
+                        outputs.sequences[0], 
+                        skip_special_tokens=True
+                    )
+                    
+                    # Remove input prompt from output
+                    if generated_text.startswith(prompt):
+                        generated_text = generated_text[len(prompt):].strip()
+                    
+                    return [{"generated_text": generated_text}]
+            
+            generator = AdvancedGenerator(model, tokenizer, generation_config)
+            
+            self.logger.info("Advanced generator model loaded successfully", model=model_path)
+            return generator
+            
+        except Exception as e:
+            self.logger.error("Failed to load generator model", error=str(e))
+            raise
+    
     def get_model(self, name: str, version: str = "v1"):
         """Get a loaded model pipeline"""
         model_key = f"{name}:{version}"
