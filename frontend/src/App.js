@@ -24,6 +24,7 @@ function App() {
   const [selectedModel, setSelectedModel] = useState('summarizer');
   const [parameters, setParameters] = useState({});
   const [showMetrics, setShowMetrics] = useState(false);
+  const [activeSection, setActiveSection] = useState('features');
   
   const { 
     text, 
