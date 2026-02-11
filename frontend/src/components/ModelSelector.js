@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CpuChipIcon,
   DocumentTextIcon,
-  FaceSmileIcon,
-  SparklesIcon
+  SparklesIcon,
+  ChatBubbleLeftRightIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { Cog6ToothIcon } from '@heroicons/react/24/solid';
 
