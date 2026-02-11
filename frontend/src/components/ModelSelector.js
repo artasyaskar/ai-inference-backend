@@ -118,7 +118,7 @@ const ModelSelector = ({
               initial="hidden"
               animate="visible"
               exit="hidden"
-              className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-lg border border-white/20 z-50 max-h-80 overflow-y-auto custom-scrollbar"
+              className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-lg border border-white/20 z-50 max-h-96 overflow-y-auto custom-scrollbar"
             >
               {models.map((model) => (
                 <motion.button

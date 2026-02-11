@@ -3,10 +3,9 @@ import { motion } from 'framer-motion';
 import { CpuChipIcon } from '@heroicons/react/24/outline';
 
 const SystemStatus = ({ models, loading, inferenceHistory, selectedModel }) => {
-  const loadedCount = models.filter(m => m.is_loaded).length;
   const totalCount = models.length;
   
-  // Find the index of selected model to show position (1-based)
+  // Find index of selected model to show position (1-based)
   const selectedIndex = models.findIndex(m => m.name === selectedModel) + 1;
 
   const statusVariants = {
@@ -41,18 +40,6 @@ const SystemStatus = ({ models, loading, inferenceHistory, selectedModel }) => {
             transition={{ duration: 0.3 }}
           >
             {selectedIndex}/{totalCount}
-          </motion.span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-gray-300">Models Loaded</span>
-          <motion.span 
-            className="text-green-400 font-mono font-bold"
-            key={loadedCount}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {loadedCount}/{totalCount}
           </motion.span>
         </div>
         <div className="flex justify-between items-center">

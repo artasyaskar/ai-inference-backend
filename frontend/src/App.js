@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  SparklesIcon, 
-  CheckCircleIcon,
-  ExclamationCircleIcon
+  SparklesIcon
 } from '@heroicons/react/24/outline';
 import { 
   Cog6ToothIcon,
