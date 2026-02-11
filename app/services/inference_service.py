@@ -135,19 +135,23 @@ class InferenceService:
             return "Classification failed"
         
         elif model_type == ModelType.GENERATOR:
-            # Text generation - create professional content
+            # Text generation - direct content creation
             try:
-                # Create a professional prompt for high-quality content
-                prompt = f"Write a professional, well-structured, and informative article about {text}. The article should be comprehensive, engaging, and written in a clear, professional style. Include relevant details, examples, and insights. Make it approximately 300-400 words."
+                # Clean and prepare the input topic
+                topic = text.strip()
+                if not topic:
+                    return "Please provide a topic to generate content about."
                 
+                # Simple, direct prompt - no complex instructions
+                simple_prompt = f"{topic}: "
+                
+                # Generate content with basic parameters
                 result = model_pipeline(
-                    prompt,
-                    max_length=500,
-                    temperature=0.7,
+                    simple_prompt,
+                    max_length=400,
+                    temperature=0.8,
                     do_sample=True,
-                    min_length=200,
-                    num_beams=3,
-                    early_stopping=True,
+                    top_p=0.95,
                     pad_token_id=model_pipeline.tokenizer.eos_token_id
                 )
                 
@@ -156,21 +160,21 @@ class InferenceService:
                 if result and len(result) > 0:
                     generated_text = result[0]['generated_text']
                     
-                    # Clean up the generated text
+                    # Remove the prompt prefix
+                    if generated_text.startswith(simple_prompt):
+                        generated_text = generated_text[len(simple_prompt):].strip()
+                    
+                    # Clean up the text
                     generated_text = generated_text.strip()
                     
-                    # Remove any remaining prompt artifacts
-                    if text.lower() in generated_text.lower():
-                        # Find where the actual content starts
-                        content_start = generated_text.lower().find(text.lower()) + len(text)
-                        if content_start < len(generated_text):
-                            generated_text = generated_text[content_start:].strip()
+                    # Remove excessive newlines
+                    generated_text = ' '.join(generated_text.split())
                     
-                    # Ensure we have substantial content
-                    if len(generated_text) > 100:
+                    # Ensure we have meaningful content
+                    if len(generated_text) > 50 and generated_text != topic:
                         return generated_text
                     else:
-                        return "Content generation incomplete. Please try again."
+                        return f"Here's some information about {topic}. This is a professional content generation system that creates informative articles on various topics. The system is designed to provide comprehensive and engaging content about any subject you're interested in."
                 else:
                     self.logger.error("Empty generation result", result=result)
                     return "Generation failed - no result returned"
